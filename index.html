@@ -7,16 +7,16 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
+  <header class="no-print">
     <h1>CSV to Printable Page</h1>
   </header>
   <main>
-    <section>
+    <section class="no-print">
       <label for="csv-file">Upload CSV File:</label>
       <input type="file" id="csv-file" accept=".csv">
     </section>
     <section id="printable">
-      <button onclick="window.print()">Print</button>
+      <button class="no-print" onclick="window.print()">Print</button>
       <div id="content"></div>
     </section>
   </main>
