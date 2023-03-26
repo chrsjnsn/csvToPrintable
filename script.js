@@ -1,3 +1,7 @@
+document.getElementById("upload-btn").addEventListener("click", function () {
+  document.getElementById("csv-file").click();
+});
+
 document.getElementById("csv-file").addEventListener("change", function (event) {
   const file = event.target.files[0];
   const reader = new FileReader();
@@ -10,6 +14,7 @@ document.getElementById("csv-file").addEventListener("change", function (event) 
 
   reader.readAsText(file);
 });
+
 
 function formatData(csvData) {
   const lines = csvData.split("\n");
