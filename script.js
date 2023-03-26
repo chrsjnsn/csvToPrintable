@@ -3,45 +3,50 @@ document.getElementById("upload-btn").addEventListener("click", function () {
 });
 
 document.getElementById("csv-file").addEventListener("change", function (event) {
-  const file = event.target.files[0];
-  const reader = new FileReader();
-  
-  reader.onload = function (e) {
-    const contents = e.target.result;
-    const formattedData = formatData(contents);
-    document.getElementById("content").innerHTML = formattedData;
-  };
-
+  let file = event.target.files[0];
+  let reader = new FileReader();
   reader.readAsText(file);
-});
 
+  reader.onload = function () {
+    let csvData = reader.result;
+    let lines = csvData.split("\n");
 
-function formatData(csvData) {
-  const lines = csvData.split("\n");
-  const headers = lines[0].split(",");
+    let records = [];
 
-  const data = [];
-  for (let i = 1; i < lines.length; i++) {
-    const obj = {};
-    const line = lines[i].split(",");
-    
-    for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = line[j];
+    for (let i = 1; i < lines.length; i++) {
+      if (lines[i].trim() === "") continue;
+
+      let fields = lines[i].split(",");
+      records.push({
+        lastName: fields[2],
+        firstName: fields[1],
+        birthDate: fields[3],
+        deathDate: fields[4],
+        cemeteryName: fields[10],
+        cityName: fields[11],
+        countyName: fields[12],
+        stateName: fields[13]
+      });
     }
-    
-    data.push(obj);
-  }
 
-  const cemeteryInfo = `${data[0].cemeteryName}, ${data[0].cityName}, ${data[0].countyName}, ${data[0].stateName}\n\n`;
+    // Sort records alphabetically by last name, then by first name
+    records.sort((a, b) => {
+      if (a.lastName === b.lastName) {
+        return a.firstName.localeCompare(b.firstName);
+      } else {
+        return a.lastName.localeCompare(b.lastName);
+      }
+    });
 
-  const people = data.map(person => {
-    const firstName = person.firstName;
-    const lastName = person.lastName;
-    const birthDate = person.birthDate || "????";
-    const deathDate = person.deathDate || "????";
-    
-    return `${firstName} ${lastName} ${birthDate}-${deathDate}`;
-  }).join("\n");
+    let content = document.getElementById("content");
+    let header = records[0].cemeteryName + "<br>" + records[0].cityName + ", " + records[0].countyName + ", " + records[0].stateName;
+    let list = "";
+    for (let record of records) {
+      let birthDate = record.birthDate === "" ? "????" : record.birthDate;
+      let deathDate = record.deathDate === "" ? "????" : record.deathDate;
+      list += `${record.firstName} ${record.lastName} ${birthDate}-${deathDate}<br>`;
+    }
 
-  return cemeteryInfo + people;
-}
+    content.innerHTML = `<h2>${header}</h2>${list}`;
+  };
+});
